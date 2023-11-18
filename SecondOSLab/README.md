@@ -1,6 +1,6 @@
 ## Лабораторная работа №2. Потоки
 
-![image](https://github.com/Hsbnn/OSLabs/assets/116022974/9a3178e8-d4bb-4083-a4ca-ff22ab6f018a)
+![image](https://github.com/Hsbnn/OSLabs/assets/116022974/be4b7906-4a55-44f9-943e-e2e1e2a2822c)
 
 
 ### Вариант 20
