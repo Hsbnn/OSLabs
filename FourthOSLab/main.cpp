@@ -1,6 +1,7 @@
 #include <iostream>
 #include "SinIntegral.hpp"
 #include "Pi.hpp"
+#include <dlfcn.h>
 
 using namespace std;
 
