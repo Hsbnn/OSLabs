@@ -288,7 +288,6 @@ int main() {
                         int number = stoi(message_from_client[5]);
                         string l = message_from_client[4];
                         char letter = l[0];
-                        // wounded
                         if (ifkill(pirat2.field, number, letter)) {
                             pirat2.field[number][int(letter) - int('A') + 1] = 'K';
                             pirat1.turn = true;
@@ -327,8 +326,6 @@ int main() {
                             sprintf(mmapdata, "%s", message_to_client.c_str());
                             cout << "Отправлено сообщение: " << message_to_client << endl;
                         }
-                        cout << "Current state of " << pirat2.name << "'s field is: " << endl;
-                        print(pirat2.field);
                     }
                     else {
                         string message_to_client = string("client:") + message_from_client[1] + ":game_name_error:";
