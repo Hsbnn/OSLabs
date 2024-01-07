@@ -49,7 +49,7 @@ void instruction() {
     cout << endl;
 }
 
-int mmapfd = shm_open("buffer", O_RDWR, 0777); // открытие области разделяемой памяти
+int mmapfd = shm_open("game_size", O_RDWR, 0777); // открытие области разделяемой памяти
 char* mmapdata = (char*)mmap(0, 10000, PROT_READ | PROT_WRITE, MAP_SHARED, mmapfd, 0); // отображение области разделяемой памяти на адресное пространство процесса (возвращает указатель на начало отображ памяти)
 
 void message_send(const string &m) {
@@ -78,6 +78,8 @@ bool message_get() { // получение ответа от сервера
     vector<string> message_from_server; // вектор команд сервера
     string strings = "";
 
+    cout << "строка из памяти   " << message << endl;
+
     for (int i = 0; i < message.size(); i++) { // по каждому символу в сообщении
         if (message[i] == ':') {
             message_from_server.push_back(strings); // заполняем вектор команд
@@ -88,7 +90,11 @@ bool message_get() { // получение ответа от сервера
         }
     }
 
+    
+
     if(message_from_server[1] == "print"){
+
+        cout << "Сообщение о принт получено" << endl;
 
         for (int i=2; i < message_from_server.size(); ++i){ // вывод поля (может сделать void?)
             cout << message_from_server[i] << endl;
@@ -279,7 +285,7 @@ int main() {
 
             if (play){
             
-                cin >> name2; //заменить на nick?
+                cin >> name2; 
                 string message_to_server = "server:" + name2 + ":invite:" + game + ":"+ password + ":";
                 waiting_answer(message_to_server);
 
@@ -342,9 +348,6 @@ int main() {
                 // cout << "Твой флот" << endl;
                 string message_to_server = "server:" + name + ":print:";
                 waiting_answer(message_to_server);
-                // cout << endl << "Вражеский флот" << endl;
-                // message_to_server = "server:" + name + ":print_oppon:";
-                // waiting_answer(message_to_server);
 
             } else {
 

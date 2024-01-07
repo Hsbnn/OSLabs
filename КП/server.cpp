@@ -10,6 +10,7 @@
 #include <cassert>
 #include <fstream>
 #include <mutex>
+ #include <algorithm>
 #include "game_functions.hpp"
 
 using namespace std;
@@ -46,9 +47,13 @@ int main() {
     gamestruct game;
     initgame(game);
     string mclient = "";
-    int mmapfd = shm_open("buffer", O_RDWR | O_CREAT, 0777);
+    int mmapfd = shm_open("game_size", O_RDWR | O_CREAT, 0777);
     if (mmapfd == -1) {
         perror("error shm_open (26)");
+        return -1;
+    }
+    if (ftruncate(mmapfd, 10000) == -1) {
+        perror("ftruncate error");
         return -1;
     }
     char *mmapdata = (char *)mmap(NULL, 10000, PROT_READ | PROT_WRITE, MAP_SHARED, mmapfd, 0);
@@ -359,7 +364,7 @@ int main() {
                 field1 = pirat1.field;
                 field2 = pirat2.field;
             }
-            string message_to_client = string("client:") + ":print:";
+            string message_to_client = string("client:") + "print:";
             message_to_client = message_to_client + "   ";    
             for (int i = 0; i<10; ++i){
                 message_to_client = message_to_client + char(int('A')+i) + " ";
@@ -398,8 +403,10 @@ int main() {
             }
             sprintf(mmapdata, "%s", message_to_client.c_str());
             cout << "Напечатаны: " << "field1, field2" << endl;
-        }
-else if (message_from_client[2] == "disconnect") {
+            cout << message_to_client << endl;
+
+        } else if (message_from_client[2] == "disconnect") {
+
             if (message_from_client[1] == pirat1.name) {
                 pirat1.turn = false;
                 pirat2.turn = true;
@@ -420,6 +427,10 @@ else if (message_from_client[2] == "disconnect") {
         mtx.unlock();
         cout << "mutex unlock" << endl;       
     }
-    shm_unlink("buffer");
+    // if (munmap(mmapdata, 10000) == -1) {
+    //             perror("Ошибка при очистке области памяти 1");
+    //             return 11;
+    //         }
+    shm_unlink("game_size");
     return 0;
 }
