@@ -1,10 +1,8 @@
-#include <cassert>
 #include <cstring>
 #include <vector>
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
-#include <pthread.h>
 #include <sys/mman.h>
 #include <algorithm>
 #include <sys/stat.h>
@@ -78,7 +76,7 @@ bool message_get() { // получение ответа от сервера
     vector<string> message_from_server; // вектор команд сервера
     string strings = "";
 
-    cout << "строка из памяти   " << message << endl;
+    // cout << "строка из памяти   " << message << endl;
 
     for (int i = 0; i < message.size(); i++) { // по каждому символу в сообщении
         if (message[i] == ':') {
@@ -90,13 +88,11 @@ bool message_get() { // получение ответа от сервера
         }
     }
 
-    
-
     if(message_from_server[1] == "print"){
 
-        cout << "Сообщение о принт получено" << endl;
+        // cout << "Сообщение о принт получено" << endl;
 
-        for (int i=2; i < message_from_server.size(); ++i){ // вывод поля (может сделать void?)
+        for (int i=2; i < message_from_server.size(); ++i){
             cout << message_from_server[i] << endl;
         }
         return true;
@@ -106,7 +102,11 @@ bool message_get() { // получение ответа от сервера
         mtx.lock();
         memset(mmapdata, '\0', 10000);
         if (message_from_server[2] == "createdgame" || message_from_server[2] == "connected") {
-            cout << "Гром и молния! Ты начинаешь бой! Игра успешно создана." << endl;
+            if (message_from_server[2] == "createdgame"){
+                cout << "Гром и молния! Ты начинаешь бой! Игра успешно создана." << endl;
+            } else {
+                cout << "Гром и молния! Дождись, пока противник ударит..." << endl;
+            }
             cout << "Посмотри на расположение своих кораблей, введи команду print." << endl;
             return unlocking(1);
         } else if (message_from_server[2] == "checked") {
@@ -235,7 +235,7 @@ int main() {
         if (command == "create") {
 
             cin >> game;
-            cout << "Введите тайный код доступа к игре" << endl;
+            cout << "Придумай тайный код доступа к игре" << endl;
             cout << name << "$ " ;
             cin >> password;
 

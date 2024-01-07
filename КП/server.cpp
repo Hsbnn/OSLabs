@@ -1,4 +1,3 @@
-#include <pthread.h>
 #include <sys/mman.h>
 #include <cstring>
 #include <fcntl.h>
@@ -7,7 +6,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
-#include <cassert>
 #include <fstream>
 #include <mutex>
  #include <algorithm>
@@ -52,10 +50,6 @@ int main() {
         perror("error shm_open (26)");
         return -1;
     }
-    if (ftruncate(mmapfd, 10000) == -1) {
-        perror("ftruncate error");
-        return -1;
-    }
     char *mmapdata = (char *)mmap(NULL, 10000, PROT_READ | PROT_WRITE, MAP_SHARED, mmapfd, 0);
     if (mmapdata == MAP_FAILED) {
         perror("error (char *)mmap");
@@ -86,9 +80,11 @@ int main() {
             continue;
         }
         mtx.lock();
-        cout << "mutex lock (87)" << endl;
+        cout << "mutex lock (83)" << endl;
 
         cout << "Получено пиратское сообщение: " << mclient << endl;
+        cout << "имя первого " << pirat1.name << endl;
+        cout << "имя второго " << pirat2.name << endl;
         memset(mmapdata, '\0', 10000);
         
         if (message_from_client[2] == "creategame") {
@@ -104,11 +100,9 @@ int main() {
                 game.created = true;
                 pirat1.turn = true;
                 pirat2.turn = false;
-
                 pirat1.name = message_from_client[1];
                 game.name = message_from_client[3];
                 game.password = message_from_client[4];
-
                 new_field(pirat1.field);
                 string message_to_client = string("client:") + message_from_client[1] + ":createdgame:";
                 sprintf(mmapdata, "%s", message_to_client.c_str());
@@ -189,8 +183,6 @@ int main() {
             }
             else{
 
-                //pirat2.invite = true;
-
                 game.name = message_from_client[3];
                 game.password = message_from_client[4];
                 game.connected = true;
@@ -223,7 +215,7 @@ int main() {
 
             }
 
-        } else if (message_from_client[2] == "hit") {
+        } else if (message_from_client[2] == "ABC") {
 
             if (!game.connected) {
                 string message_to_client = string("client:") + message_from_client[1] + ":game_not_connected:";
@@ -231,7 +223,7 @@ int main() {
                 cout << "Отправлено сообщение: " << message_to_client << endl;
             }
             if (message_from_client[1] == pirat2.name) {
-                if (pirat2.turn && !pirat1.turn) {  // check try
+                if (pirat2.turn && !pirat1.turn) { 
                     if (game.name == message_from_client[3]) {
                         int number = stoi(message_from_client[5]);
                         string l = message_from_client[4];
@@ -243,7 +235,7 @@ int main() {
                             if (ifwinner(pirat1.field)) {
                                 string message_to_client = string("client:") + message_from_client[1] + ":WIN:";
                                 sprintf(mmapdata, "%s", message_to_client.c_str());
-                                cout << "Sending to pirat2 next message:" << message_to_client << endl;
+                                cout << "Отправлено сообщение:" << message_to_client << endl;
                                 initpirat(pirat1);
                                 initpirat(pirat2);
                                 initgame(game);
@@ -276,8 +268,6 @@ int main() {
                             sprintf(mmapdata, "%s", message_to_client.c_str());
                             cout << "Отправлено сообщение: " << message_to_client << endl;
                         }
-                        cout << "Current state of " << pirat1.name << "'s field is: " << endl;
-                        print(pirat1.field);
 
                     } else {
 
@@ -306,7 +296,7 @@ int main() {
                             if (ifwinner(pirat2.field)) {
                                 string message_to_client = string("client:") + message_from_client[1] + ":WIN:";
                                 sprintf(mmapdata, "%s", message_to_client.c_str());
-                                cout << "Sending to pirat1 next message: " << message_to_client << endl;
+                                cout << "Отправлено сообщение: " << message_to_client << endl;
                                 initpirat(pirat1);
                                 initpirat(pirat2);
                                 initgame(game);
@@ -330,8 +320,8 @@ int main() {
                             sprintf(mmapdata, "%s", message_to_client.c_str());
                             cout << "Отправлено сообщение: " << message_to_client << endl;
                         } else if (ifmiss(pirat2.field, number, letter)) {
-                            pirat1.turn = false;
-                            pirat2.turn = true;
+
+                            pirat1.turn = false; pirat2.turn = true;
                             pirat2.field[number][int(letter) - int('A') + 1] = 'M';
                             string message_to_client = string("client:") + message_from_client[1] + ":miss:";
                             sprintf(mmapdata, "%s", message_to_client.c_str());
@@ -403,7 +393,7 @@ int main() {
             }
             sprintf(mmapdata, "%s", message_to_client.c_str());
             cout << "Напечатаны: " << "field1, field2" << endl;
-            cout << message_to_client << endl;
+            // cout << message_to_client << endl;
 
         } else if (message_from_client[2] == "disconnect") {
 
@@ -427,10 +417,10 @@ int main() {
         mtx.unlock();
         cout << "mutex unlock" << endl;       
     }
-    // if (munmap(mmapdata, 10000) == -1) {
-    //             perror("Ошибка при очистке области памяти 1");
-    //             return 11;
-    //         }
+    if (munmap(mmapdata, 10000) == -1) {
+                perror("Ошибка при очистке области памяти 1");
+                return 11;
+            }
     shm_unlink("game_size");
     return 0;
 }
