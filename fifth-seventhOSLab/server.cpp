@@ -20,7 +20,7 @@ int main(){
 
     string command, answer, str;
     CalculationNode node(-1, -1, -1);
-    BalancedTree tree;
+    Tree tree;
     int child;
 
     while (cout << "$> " && cin >> command){

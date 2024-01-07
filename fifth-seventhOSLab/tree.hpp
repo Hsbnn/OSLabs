@@ -1,16 +1,16 @@
 #pragma once
 #include <iostream>
 #include <string> 
-class BalancedTree {
-        class BalancedTreeNode {
+class Tree {
+        class TreeNode {
             public:
                 int id; //идентификатор узла
-                BalancedTreeNode* left; //указатель на левый дочерний узел
-                BalancedTreeNode* right;
+                TreeNode* left; //указатель на левый дочерний узел
+                TreeNode* right;
                 int height; //высота узла в дереве
                 bool available; //флаг доступности узла
 
-                BalancedTreeNode (int id) { //init узла
+                TreeNode (int id) { //init узла
                     this->id = id;
                     available = true;
                     left = NULL;
@@ -69,10 +69,10 @@ class BalancedTree {
                 void AddInNode (int id, int parent_id, set<int> &ids) { // id - кого добавляем, parent_id - куда добавляем, set - все узлы
                     if (this->id == parent_id) {
                         if (left == NULL){
-                            left = new BalancedTreeNode(id);
+                            left = new TreeNode(id);
                         }
                         else {
-                            right = new BalancedTreeNode(id);
+                            right = new TreeNode(id);
                         }
                         ids.insert(id); // добавляем в id множество всех
                     }
@@ -136,14 +136,14 @@ class BalancedTree {
                         return -2;
                     }
                 }
-                ~BalancedTreeNode() {}
+                ~TreeNode() {}
         };
     private:
-            BalancedTreeNode* root; // корневой узел дерева
+            TreeNode* root; // корневой узел дерева
     public:
         set<int> ids;
-        BalancedTree() {
-            root = new BalancedTreeNode(-1); // корневой узел становися -1, init
+        Tree() {
+            root = new TreeNode(-1); // корневой узел становися -1, init
         } 
         bool Exist(int id) {
             if (ids.find(id) != ids.end()) { // поиск во множестве
@@ -164,7 +164,7 @@ class BalancedTree {
         void RemoveFromRoot(int idElem) { //удаляет узел
             root->Remove(idElem, ids);
         }
-        ~BalancedTree() {
+        ~Tree() {
             root->RecursionRemove(ids); //деструктор, рекурсивно удаляет все
             delete root;
         }
