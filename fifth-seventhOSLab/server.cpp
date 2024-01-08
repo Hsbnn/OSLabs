@@ -40,9 +40,9 @@ int main(){
                         break;
                     } else {
                         string message = "create " +  to_string(child); // если он не равен, то формируем сообщение
-                        answer = node.sendstring(message, idParent); //(вызывается у текущей ноды) отправка на родительский узел (поиск) (с минимальной высотой для балансировки дерева) сообщения о создании нового узла
+                        answer = node.sendstring(message, idParent); //(вызывается у текущей ноды) отправка на родительский узел (поиск) сообщения о создании нового узла
                         if (answer == "Error: Parent not found") {
-                            tree.AvailabilityCheck(idParent); // тогда проверим доступность дочернего узла и продолжим цикл
+                            tree.AvailabilityCheck(idParent); // тогда корректируем доступность узла и продолжим цикл
                         }
                         else {
                             tree.AddInTree(child, idParent); // иначе добавим в дерево узел
@@ -99,7 +99,7 @@ int main(){
                     tree.RemoveFromRoot(child); // удаление узла из дерева
                     if (child == node.left_id){
                         node.left_id = -2; // отсутствие узла
-                        unbind(node.left, node.left_port); // разрыв связи с портом, занятым соответсвующим узлом, чтобы освободить его
+                        unbind(node.left, node.left_port); // разрыв связи с портом, занятым соответствующим узлом, чтобы освободить его
                         answer = "ok";
                     }
                     else if (child == node.right_id) {

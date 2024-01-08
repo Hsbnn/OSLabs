@@ -151,7 +151,7 @@ class Tree {
             }
             return false;
         }
-        void AvailabilityCheck(int id) { // проверка доступности узла
+        void AvailabilityCheck(int id) { // корректировка доступности узла
             root->CheckAvailability(id);
         }
         int FindID() {

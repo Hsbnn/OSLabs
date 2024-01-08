@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     while (1){
 
         message = receive_message(node.parent); //получаем сообщение от родительского узла
+        cout << "получили сообщение " << message << endl;
         istringstream request(message); //поток ввода, как cin, только для строки message
         request >> command; //из потока извлекается первое слово
 
@@ -50,6 +51,12 @@ int main(int argc, char *argv[]) {
         } else if (command == "pid"){
             answer = to_string(getpid()); //просто получаем идентификатор текущего процесса
             send_message(node.parent, answer); //отправляем ответ родительскому узлу
+        } else if (command == "send"){
+            request >> child;
+            cout << "получили сообщение с send...."<< endl;
+            getline(request, str);
+            answer = node.sendstring(str, child);
+            send_message(node.parent, answer);
         }
 
     }

@@ -10,7 +10,7 @@ private:
     zmq::context_t context; // контекст ZMQ для создания сокетов
     bool timerRunning; // переменная, которая отслеживает состояние таймера, если активен, то true
     chrono::steady_clock::time_point startTime; //время начала таймера
-    std::chrono::milliseconds stopTime; // чтобы хранить время после stop таймер
+    std::chrono::milliseconds stopTime = 0; // чтобы хранить время после stop таймер
 public:
     zmq::socket_t left, right, parent;      // сокеты для связи с левым, правым и родительским узлами
     int left_port, right_port, parent_port; // порты соединения с левым, правым и родительским узлами
@@ -183,6 +183,7 @@ public:
                 // формирование строки message, которая содержит команду "send" и идентификатор узла id, а также само сообщение string.
                 std::string message = "send " + to_string(id) + " " + string;
                 send_message(left, message);
+                cout << "Отправили сообщение с send...." << endl;
                 try
                 {
                     message = receive_message(left);
@@ -200,6 +201,7 @@ public:
             {
                 std::string message = "send " + to_string(id) + " " + string;
                 send_message(right, message);
+                cout << "Отправили сообщение с send...." << endl;
                 try
                 {
                     message = receive_message(right);
